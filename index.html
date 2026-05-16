@@ -4,90 +4,133 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ExamPrep AI</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body{font-family:Arial;margin:0;background:linear-gradient(135deg,#4f46e5,#06b6d4,#22c55e);color:white;text-align:center;transition:0.3s}
-.dark{background:#111;color:#fff}
-.container{max-width:900px;margin:auto;padding:15px}
-.card{background:white;color:#111;padding:20px;border-radius:18px;margin:15px 0}
-.dark .card{background:#222;color:#fff}
-input,select,button,textarea{width:90%;padding:12px;margin:8px;border-radius:10px}
-button{background:#4f46e5;color:white;border:none}
+body{font-family:Arial,sans-serif;margin:0;background:linear-gradient(135deg,#2563eb,#7c3aed,#06b6d4);color:white}
+.container{max-width:900px;margin:auto;padding:20px}
+.card{background:white;color:#111;border-radius:20px;padding:20px;margin:15px 0;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+input,select,button,textarea{width:90%;padding:12px;margin:8px;border-radius:10px;border:1px solid #ccc}
+button{background:#2563eb;color:white;border:none;font-weight:bold}
+.hidden{display:none}
+h1,h2{text-align:center}
+.progress{width:90%;background:#e5e7eb;border-radius:10px;margin:auto}
+.bar{height:20px;background:#22c55e;width:0%;border-radius:10px}
 </style>
 </head>
 <body>
+
 <div class="container">
-<div class="card">
-<h1>🚀 AYUSH MISHRA</h1>
-<h2>ExamPrep AI</h2>
-<button onclick="toggleDark()">Dark Mode</button>
-<p id="quote"></p>
-</div>
+  <div class="card" id="loginPage">
+    <h1>🚀 AYUSH MISHRA</h1>
+    <h2>ExamPrep AI</h2>
+    <p style="text-align:center;">Smart preparation platform for students</p>
+    <input id="studentName" placeholder="Enter your name">
+    <select id="studentExam">
+      <option>IPMAT</option>
+      <option>CLAT</option>
+      <option>JEE Main</option>
+      <option>NEET</option>
+      <option>CUET</option>
+      <option>UPSC</option>
+    </select>
+    <button onclick="startApp()">Start</button>
+  </div>
 
-<div class="card">
-<h2>Login</h2>
-<input id="name" placeholder="Enter name">
-<select id="exam"><option>IPMAT</option><option>CLAT</option><option>JEE</option><option>NEET</option></select>
-<button onclick="login()">Start</button>
-<p id="welcome"></p>
-</div>
+  <div id="dashboard" class="hidden">
+    <div class="card">
+      <h2 id="welcome"></h2>
+      <p id="quote"></p>
+    </div>
 
-<div class="card">
-<h2>Subject-wise Tracker</h2>
-<input id="quant" type="number" placeholder="Quant %">
-<input id="verbal" type="number" placeholder="Verbal %">
-<input id="lr" type="number" placeholder="LR %">
-<button onclick="track()">Analyze</button>
-<p id="analysis"></p>
-<p id="weak"></p>
-</div>
+    <div class="card">
+      <h2>Syllabus Tracker</h2>
+      <input type="number" id="totalCh" placeholder="Total chapters">
+      <input type="number" id="doneCh" placeholder="Completed chapters">
+      <button onclick="calcProgress()">Check Progress</button>
+      <p id="progressText"></p>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+    </div>
 
-<div class="card">
-<h2>To-do List</h2>
-<textarea id="todo"></textarea>
-<button onclick="saveTodo()">Save</button>
-</div>
+    <div class="card">
+      <h2>Personal Planner</h2>
+      <input type="date" id="examDate">
+      <input type="number" id="hours" placeholder="Daily study hours">
+      <button onclick="generatePlan()">Generate Planner</button>
+      <p id="plan"></p>
+      <p id="chance"></p>
+    </div>
 
-<div class="card">
-<h2>Notes</h2>
-<textarea id="notes"></textarea>
-<button onclick="saveNotes()">Save</button>
-</div>
+    <div class="card">
+      <h2>Today's Tasks</h2>
+      <textarea id="todo" placeholder="Write today's tasks"></textarea>
+    </div>
 
-<div class="card">
-<h2>Performance Graph</h2>
-<canvas id="chart"></canvas>
-</div>
+    <div class="card">
+      <h2>Notes</h2>
+      <textarea id="notes" placeholder="Write notes"></textarea>
+    </div>
+
+    <div class="card">
+      <h2>AI Doubt Assistant</h2>
+      <input id="question" placeholder="Ask your doubt">
+      <button onclick="askAI()">Ask</button>
+      <p id="answer"></p>
+    </div>
+  </div>
 </div>
 
 <script>
-const quotes=["Success comes from consistency","Study smart not just hard","Small progress is progress"];
-document.getElementById("quote").innerText=quotes[Math.floor(Math.random()*quotes.length)];
+const quotes=[
+"Consistency beats talent.",
+"Every day counts.",
+"Small progress is still progress."
+];
 
-function toggleDark(){document.body.classList.toggle("dark")}
-function login(){
- let name=document.getElementById("name").value||"Student";
- let exam=document.getElementById("exam").value;
- document.getElementById("welcome").innerText="Welcome "+name+" | Target "+exam;
+function startApp(){
+  let name=document.getElementById("studentName").value.trim();
+  let exam=document.getElementById("studentExam").value;
+  if(!name){ alert("Apna naam likho"); return; }
+
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+  document.getElementById("welcome").innerText="Welcome "+name+" | Target: "+exam;
+  document.getElementById("quote").innerText=quotes[Math.floor(Math.random()*quotes.length)];
 }
-function track(){
- let q=+document.getElementById("quant").value||0;
- let v=+document.getElementById("verbal").value||0;
- let l=+document.getElementById("lr").value||0;
- let avg=Math.round((q+v+l)/3);
- let weak=Math.min(q,v,l)==q?"Quant":Math.min(q,v,l)==v?"Verbal":"LR";
- document.getElementById("analysis").innerText="Readiness Score: "+avg+"/100";
- document.getElementById("weak").innerText="Weak Subject: "+weak;
- new Chart(document.getElementById("chart"),{
-   type:'bar',
-   data:{labels:["Quant","Verbal","LR"],datasets:[{data:[q,v,l]}]}
- });
+
+function calcProgress(){
+  let total=+document.getElementById("totalCh").value||0;
+  let done=+document.getElementById("doneCh").value||0;
+  let p=total?Math.round((done/total)*100):0;
+  document.getElementById("progressText").innerText="Completed: "+p+"%";
+  document.getElementById("bar").style.width=p+"%";
 }
-function saveTodo(){localStorage.setItem("todo",document.getElementById("todo").value)}
-function saveNotes(){localStorage.setItem("notes",document.getElementById("notes").value)}
-window.onload=()=>{
- document.getElementById("todo").value=localStorage.getItem("todo")||"";
- document.getElementById("notes").value=localStorage.getItem("notes")||"";
+
+function generatePlan(){
+  let total=+document.getElementById("totalCh").value||0;
+  let done=+document.getElementById("doneCh").value||0;
+  let hours=+document.getElementById("hours").value||0;
+  let date=new Date(document.getElementById("examDate").value);
+  let now=new Date();
+  let days=Math.max(1,Math.ceil((date-now)/(1000*60*60*24)));
+  let remain=Math.max(0,total-done);
+  let perDay=(remain/days).toFixed(1);
+
+  document.getElementById("plan").innerText=
+    "Daily target: "+perDay+" chapters/day | "+hours+" hrs/day";
+
+  let percent = total?Math.round((done/total)*100):0;
+  let msg = (percent>=70 && hours>=6) ? "✅ Good chance to crack exam" :
+            (percent>=50 && hours>=4) ? "⚡ Possible, but increase consistency" :
+            "❌ Current plan weak, improve daily hours";
+  document.getElementById("chance").innerText=msg;
+}
+
+function askAI(){
+  let q=document.getElementById("question").value.toLowerCase();
+  let ans="Practice regularly and solve PYQs.";
+  if(q.includes("who created you")) ans="I was created by Ayush Mishra.";
+  if(q.includes("ipmat")) ans="For IPMAT, focus on aptitude + verbal.";
+  if(q.includes("clat")) ans="For CLAT, legal reasoning and mocks are important.";
+  document.getElementById("answer").innerText=ans;
 }
 </script>
 </body>
