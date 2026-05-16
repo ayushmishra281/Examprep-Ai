@@ -1,24 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>ExamPrep AI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: Arial; background:#f4f7ff; text-align:center; padding:20px; }
-    .box { background:white; padding:20px; border-radius:15px; box-shadow:0 0 10px #ccc; max-width:500px; margin:auto; }
-    h1 { color:#2c3e50; }
-    input, button { padding:10px; margin:10px; width:80%; border-radius:10px; border:1px solid #ccc; }
-    button { background:#4CAF50; color:white; border:none; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ExamPrep AI</title>
+<style>
+body{font-family:Arial;margin:0;background:linear-gradient(135deg,#0f172a,#1e293b);color:white;text-align:center}
+.container{max-width:950px;margin:auto;padding:20px}
+.card{background:#111827;border-radius:18px;padding:20px;margin:15px;box-shadow:0 0 15px rgba(255,255,255,.1)}
+input,select,button{width:90%;padding:12px;margin:8px;border:none;border-radius:10px}
+button{background:#22c55e;color:white;font-weight:bold}
+.progress{width:90%;background:#334155;border-radius:10px;margin:auto}
+.progress-bar{height:20px;background:#22c55e;width:0%;border-radius:10px}
+</style>
 </head>
 <body>
-  <div class="box">
-    <h1>📚 ExamPrep AI</h1>
-    <p>Created by Ayush Mishra</p>
-    <p>Track your exam preparation progress</p>
-    <input type="text" placeholder="Enter exam name">
-    <input type="number" placeholder="Syllabus completed %">
-    <button onclick="alert('Progress saved!')">Save Progress</button>
-  </div>
+<div class="container">
+<div class="card">
+<h1>📚 ExamPrep AI</h1>
+<h3>Created by Ayush Mishra</h3>
+<p>All in one exam preparation platform</p>
+<p id="countdown"></p>
+</div>
+
+<div class="card">
+<h2>Student Login</h2>
+<input placeholder="Enter Name">
+<input placeholder="Class / Target Exam">
+<button>Login</button>
+</div>
+
+<div class="card">
+<h2>Select Exam</h2>
+<select id="exam">
+<option>JEE Main</option>
+<option>JEE Advanced</option>
+<option>NEET</option>
+<option>NDA</option>
+<option>CUET</option>
+<option>CLAT</option>
+<option>IPMAT</option>
+<option>UPSC</option>
+<option>SSC CGL</option>
+<option>CAT</option>
+<option>GATE</option>
+<option>CA Foundation</option>
+<option>Banking Exams</option>
+<option>Railway Exams</option>
+<option>State PCS</option>
+</select>
+<input type="number" id="syllabus" placeholder="Syllabus completed %" min="0" max="100">
+<input type="number" id="hours" placeholder="Study hours today">
+<button onclick="analyze()">Analyze</button>
+<h3 id="result"></h3>
+<div class="progress"><div class="progress-bar" id="bar"></div></div>
+</div>
+
+<div class="card">
+<h2>Rank Predictor</h2>
+<input type="number" id="marks" placeholder="Enter mock test marks">
+<button onclick="rankPredict()">Predict Rank</button>
+<p id="rank"></p>
+</div>
+
+<div class="card">
+<h2>AI Doubt Assistant</h2>
+<input type="text" id="question" placeholder="Ask your doubt">
+<button onclick="askAI()">Ask</button>
+<p id="answer"></p>
+</div>
+
+<div class="card">
+<h2>Daily Planner</h2>
+<p>Morning: Study concepts</p>
+<p>Afternoon: Solve PYQs</p>
+<p>Evening: Mock Test + Revision</p>
+</div>
+</div>
+
+<script>
+function analyze(){
+ let s=parseInt(document.getElementById("syllabus").value)||0;
+ let h=parseInt(document.getElementById("hours").value)||0;
+ let exam=document.getElementById("exam").value;
+ let msg=s>=80&&h>=6?"✅ Strong chance in "+exam:s>=50?"⚡ Moderate prep for "+exam:"❌ Need improvement for "+exam;
+ document.getElementById("result").innerText=msg;
+ document.getElementById("bar").style.width=s+"%";
+}
+function rankPredict(){
+ let m=parseInt(document.getElementById("marks").value)||0;
+ let rank=m>180?"Predicted Rank: Top 500":m>120?"Predicted Rank: Top 5000":"Predicted Rank: Improve more";
+ document.getElementById("rank").innerText=rank;
+}
+function askAI(){
+ let q=document.getElementById("question").value.toLowerCase();
+ document.getElementById("answer").innerText=q.includes("who created you")?"I was created by Ayush Mishra.":"AI: Keep practicing and revise daily.";
+}
+let d=new Date();
+d.setDate(d.getDate()+100);
+document.getElementById("countdown").innerText="Next exam countdown: 100 days";
+</script>
 </body>
 </html>
